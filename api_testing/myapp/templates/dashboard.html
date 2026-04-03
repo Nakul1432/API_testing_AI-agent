@@ -1,0 +1,133 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Agent Dashboard</title>
+
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    
+
+    <link rel="stylesheet" href="{% static 'styles.css' %}">
+</head>
+<body class="h-screen flex flex-col p-6 space-y-6 overflow-hidden">
+
+    <!-- header -->
+    <header class="flex justify-between items-center bg-slate-900/40 p-4 rounded-2xl border border-slate-800">
+        <div class="flex items-center space-x-4">
+            <div class="bg-blue-600 p-3 rounded-xl">
+                <i class="fas fa-robot text-2xl text-white"></i>
+            </div>
+            <div>
+                <h1 class="text-2xl font-bold tracking-tight text-white">API Agent <span class="text-blue-500 font-medium">Dashboard</span></h1>
+                <p class="text-xs text-slate-500">Conversational Documentation & Verification</p>
+            </div>
+        </div>
+        
+        <div class="flex items-center space-x-4">
+            <input type="file" id="swagger-upload" class="hidden" onchange="uploadFile()">
+            <button onclick="document.getElementById('swagger-upload').click()" class="bg-slate-800 hover:bg-slate-700 text-white px-5 py-2.5 rounded-xl text-sm font-semibold transition-all flex items-center border border-slate-700">
+                <i class="fas fa-file-import mr-2 text-blue-400"></i> Ingest Swagger JSON
+            </button>
+            <div class="text-right border-l border-slate-800 pl-4">
+                <p class="text-xs font-bold text-slate-400 uppercase">Test Your API</p>
+            </div>
+        </div>
+    </header>
+
+    <!-- dashboard-->
+    <main class="flex-1 grid grid-cols-12 gap-6 overflow-hidden">
+        
+        <!-- ai agent-->
+        <section class="col-span-12 lg:col-span-4 glass-panel">
+            <div class="p-4 border-b border-slate-700 bg-slate-800/20 flex justify-between items-center">
+                <h2 class="text-xs font-bold uppercase tracking-widest text-slate-400 flex items-center">
+                    <i class="fas fa-brain mr-2 text-blue-500"></i> AI Agent Chat
+                </h2>
+            </div>
+            
+            <div id="chat-box" class="flex-1 p-5 overflow-y-auto space-y-5 custom-scrollbar bg-slate-900/10">
+                <div class="chat-bubble-ai p-4 text-sm leading-relaxed shadow-sm text-slate-300">
+                    Welcome! Upload your **Swagger file** to begin. I can explain endpoints, generate code, and verify API responses.
+                </div>
+            </div>
+
+            <div class="p-4 bg-slate-900/50 border-t border-slate-800">
+                <div class="relative">
+                    <input id="chat-input" type="text" placeholder="Ask a question..." 
+                           class="w-full bg-slate-800 border border-slate-700 rounded-xl pl-4 pr-12 py-3 text-sm focus:border-blue-500 outline-none">
+                    <button onclick="sendMessage()" class="absolute right-2 top-2 bg-blue-600 hover:bg-blue-500 text-white w-8 h-8 rounded-lg flex items-center justify-center transition-transform active:scale-95">
+                        <i class="fas fa-paper-plane text-xs"></i>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- summary -->
+        <section class="col-span-12 lg:col-span-4 glass-panel">
+            <div class="p-4 border-b border-slate-700 bg-slate-800/20">
+                <h2 class="text-xs font-bold uppercase tracking-widest text-slate-400 flex items-center">
+                    <i class="fas fa-file-alt mr-2 text-green-500"></i> Documentation Summary
+                </h2>
+            </div>
+            <div id="doc-container" class="flex-1 p-5 overflow-y-auto custom-scrollbar space-y-6">
+                <div id="doc-placeholder" class="h-full flex flex-col items-center justify-center text-center p-6 space-y-3">
+                    <i class="fas fa-cloud-upload-alt text-4xl text-slate-700"></i>
+                    <p class="text-xs text-slate-500">Upload JSON to see endpoints.</p>
+                </div>
+                <div id="doc-content" class="hidden space-y-5">
+                    <div>
+                        <h3 id="doc-title" class="text-base font-bold text-white mb-1"></h3>
+                        <p id="doc-desc" class="text-[11px] text-slate-400 leading-relaxed"></p>
+                    </div>
+                    <div id="endpoint-list" class="space-y-2"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- api testing-->
+        <section class="col-span-12 lg:col-span-4 glass-panel">
+            <div class="p-4 border-b border-slate-700 bg-slate-800/20">
+                <h2 class="text-xs font-bold uppercase tracking-widest text-slate-400 flex items-center">
+                    <i class="fas fa-terminal mr-2 text-purple-500"></i> Manual API Tester
+                </h2>
+            </div>
+            <div class="flex-1 p-5 space-y-4 overflow-y-auto custom-scrollbar">
+                <div class="space-y-3">
+                    <div class="flex space-x-2">
+                        <select id="test-method" class="w-24 bg-slate-800 border border-slate-700 rounded-xl px-2 py-2 text-xs font-bold text-white outline-none">
+                            <option>GET</option><option>POST</option><option>PUT</option><option>DELETE</option>
+                        </select>
+                        <input id="test-url" type="text" placeholder="https://api.example.com" 
+                               class="flex-1 bg-slate-800 border border-slate-700 rounded-xl px-4 py-2 text-xs outline-none">
+                    </div>
+                    
+                    <textarea id="test-body" placeholder='Request Body (JSON)' 
+                              class="w-full h-24 bg-slate-800 border border-slate-700 rounded-xl p-3 text-xs font-mono text-blue-300 resize-none outline-none" spellcheck="false"></textarea>
+                    
+                    <button onclick="runManualTest()" class="w-full bg-indigo-600 hover:bg-indigo-500 py-3 rounded-xl text-sm font-bold shadow-lg transition-all">
+                        Execute Request
+                    </button>
+                </div>
+
+                <div class="pt-4 border-t border-slate-800">
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Response</span>
+                        <span id="test-status" class="hidden text-[10px] px-2 py-0.5 rounded-full font-bold"></span>
+                    </div>
+                    <div id="test-response" class="bg-black/40 rounded-xl border border-slate-800 p-4 min-h-[100px] overflow-auto text-[11px] font-mono text-slate-300 custom-scrollbar">
+                        <span class="text-slate-600 italic">No request sent.</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <script src="{% static 'script.js' %}"></script>
+</body>
+</html>

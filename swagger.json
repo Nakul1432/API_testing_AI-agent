@@ -1,0 +1,98 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "version": "2.1.0",
+    "title": "TMU Secure User Gateway",
+    "description": "A secure identity management API. Use this to test your Agent's ability to handle Authentication and User Profiles.",
+    "contact": { "name": "TMU Security Lab" }
+  },
+  "host": "jsonplaceholder.typicode.com",
+  "basePath": "/",
+  "schemes": ["https"],
+  "securityDefinitions": {
+    "api_key": {
+      "type": "apiKey",
+      "name": "X-API-KEY",
+      "in": "header"
+    }
+  },
+  "paths": {
+    "/users": {
+      "get": {
+        "tags": ["System"],
+        "summary": "Fetch all registered users",
+        "description": "Returns a list of all users in the directory.",
+        "operationId": "listUsers",
+        "responses": {
+          "200": { "description": "List of users retrieved successfully" }
+        }
+      },
+      "post": {
+        "tags": ["Provisioning"],
+        "summary": "Register a new account",
+        "operationId": "createUser",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "user",
+            "required": true,
+            "schema": { "$ref": "#/definitions/User" }
+          }
+        ],
+        "responses": { "201": { "description": "User created" } }
+      }
+    },
+    "/users/{userId}": {
+      "get": {
+        "tags": ["System"],
+        "summary": "Get profile by ID",
+        "operationId": "getUserById",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": { "description": "Profile found" },
+          "404": { "description": "User not found" }
+        }
+      }
+    },
+    "/posts": {
+      "get": {
+        "tags": ["Activity"],
+        "summary": "Get user activity feed",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "query",
+            "description": "Filter activity by a specific user ID",
+            "type": "integer"
+          }
+        ],
+        "responses": { "200": { "description": "Feed retrieved" } }
+      }
+    }
+  },
+  "definitions": {
+    "User": {
+      "type": "object",
+      "required": ["username", "email"],
+      "properties": {
+        "id": { "type": "integer" },
+        "username": { "type": "string", "example": "nakul_dev" },
+        "email": { "type": "string", "example": "nakul@example.com" },
+        "address": {
+          "type": "object",
+          "properties": {
+            "city": { "type": "string" },
+            "zipcode": { "type": "string" }
+          }
+        }
+      }
+    }
+  }
+}
