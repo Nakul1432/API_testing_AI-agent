@@ -1,97 +1,60 @@
-﻿# API_testing_AI-agent
-🤖 AI-Powered API Documentation QnA Agent
+AI-Powered API Documentation QnA Agent
 
-Transforming Static Swagger Docs into Conversational Intelligence
+Transforming Static Specifications into Conversational Intelligence
 
-🌟 Overview
+Overview
 
-Traditional API documentation is often dense and difficult to navigate. This project, developed for the Faculty of Engineering, Teerthanker Mahaveer University (TMU), introduces an intelligent agent that allows developers to interact with Swagger/OpenAPI documentation using natural language.
+This project is about building an AI agent that helps with API documentation. It was made for the Faculty of Engineering at Teerthanker Mahaveer University, or TMU for short. Developers often struggle with those thick Swagger files, they are machine friendly but not so much for people reading them. The agent kind of steps in like a technical architect, not just pulling text but figuring out the API logic to give useful answers.
 
-By leveraging Retrieval-Augmented Generation (RAG) and LangGraph, the agent doesn't just search for text—it understands the semantic intent behind developer queries.
+How the Model Works
 
-🚀 Key Features
+The way it works involves this recursive synthesis thing, which sounds fancy but basically means it builds up the understanding step by step. First, it takes in Swagger JSON files or even PDF manuals. When you upload the JSON, it breaks everything down into parts like paths, methods, and schemas. Then the Llama-3.1-8B model comes in, acting like a writer to turn that raw stuff into plain English summaries for each chunk.
 
-Conversational Q&A: Ask questions like "How do I register a new user?" and get precise technical answers.
+Those summaries get put together into a new PDF, what they call the Master API Manual. It is more readable than the original tech spec. After that, it indexes this PDF in ChromaDB using sentence transformers. So instead of searching messy JSON, it looks through the business logic summaries, which helps a lot with queries that are not super precise.
 
-Automated Code Generation: Instantly generates runnable code snippets in Python (Requests) and Java.
+Query Processing 
 
-Semantic Search: Maps human concepts (e.g., "social wall") to technical endpoints (e.g., /posts) even if keywords don't match.
-
-Interactive API Tester: A built-in dashboard to execute and verify API calls in real-time.
-
-Dynamic Ingestion: Upload any Swagger JSON file to instantly re-train the agent's brain.
-
-🛠️ Technical Stack
-
-Category
-
-Technology
-
-Backend
-
-Django (Python)
-
-AI Orchestration
-
-LangChain & LangGraph
-
-LLM
-
-Meta Llama-3.1-8B (via Hugging Face)
-
-Vector Database
-
-ChromaDB
-
-Frontend
-
-Tailwind CSS & JavaScript
-
-⚙️ Installation & Setup
+For user questions, there is a query refiner that turns casual stuff like how to add a user into something technical, like details on the POST users endpoint. And it always spits out code snippets in Python, Java, or JavaScript. I think that is pretty handy for developers switching languages.
 
 Clone the repository:
 
-git clone [https://github.com/Nakul1432/API_testing_AI-agent.git](https://github.com/Nakul1432/API_testing_AI-agent.git)
-cd API_testing_AI-agent
-
+.git clone [https://github.com/Nakul1432/API_testing_AI-agent.git](https://github.com/Nakul1432/API_testing_AI-agent.git)
+.cd API_testing_AI-agent
 
 Create a Virtual Environment:
+.python -m venv venv
 
-python -m venv venv
-# Windows
-venv\Scripts\activate
-# Mac/Linux
-source venv/bin/activate
+# Windows   venv\Scripts\activate
 
+# Mac/Linux  source venv/bin/activate
 
 Install Dependencies:
-
 pip install -r requirements.txt
-
 
 Environment Variables:
 Create a .env file in the root directory and add your Hugging Face API Token:
-
 HF_TOKEN=your_huggingface_token_here
 
-
 Run the Server:
-
 python api_testing/manage.py runserver
 
 
-📸 Dashboard Preview
 
-The dashboard features a triple-panel interface:
 
-AI Agent Chat: For natural language interaction.
+ Key Advantages
 
-Documentation Summary: Auto-parsed endpoint list.
+.Intent Mapping (Semantic Search): Maps human concepts to technical paths. If a user asks for a "Social Wall," the agent understands the semantic intent matches the /posts endpoint.
+.Developer Productivity: Reduces "Time-to-First-Call" by generating runnable boilerplate code across three major languages instantly.
+.Self-Documenting: Automatically generates a downloadable, readable Developer Reference PDF from any raw JSON file.
+.Interactive Verification: Unlike static docs, the agent can actually test the endpoint in real-time through the built-in Tester Panel to verify server status.
 
-Manual Tester: For live API execution and response verification.
+Technical Stack
 
-📜 Acknowledgments
+.Backend: Django Python
+.AI Orchestration: LangChain ,LangGraph
+.LLM: Meta Llama-3.1-8B-Instruct 
+.Vector DB: ChromaDB
+.PDF Generation: ReportLab & PyPDF2
+.Frontend: Tailwind CSS & JavaScript
 
-Special thanks to the Faculty of Engineering, TMU for providing the requirements and guidance for this "API Documentation QnA Agent" project.
 
-Developed with ❤️ by Nakul Jain
