@@ -1,0 +1,33 @@
+/* Custom Scrollbar for Black/Grey Theme */
+.custom-scrollbar::-webkit-scrollbar {
+    width: 5px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+    background: #3f3f46; /* zinc-700 */
+    border-radius: 10px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: #52525b; /* zinc-600 */
+}
+
+/* Glass Panel Adjustment */
+.glass-panel {
+    background: rgba(24, 24, 27, 0.6); /* zinc-900 with opacity */
+    backdrop-filter: blur(12px);
+}
+
+/* Additional chat styling */
+.chat-bubble-user {
+    background: #27272a; /* zinc-800 */
+    color: #ffffff;
+    align-self: flex-end;
+    border-radius: 1rem 1rem 0 1rem;
+    padding: 1rem;
+    border: 1px solid #3f3f46;
+}
