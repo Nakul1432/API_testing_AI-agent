@@ -1,5 +1,5 @@
 
-from django.urls import path
+from django.urls import include, path
 from . import views
 
 urlpatterns = [
@@ -7,6 +7,7 @@ urlpatterns = [
     path('api/upload/', views.upload_swagger, name='upload_swagger'),
     path('api/chat/', views.chat_agent, name='chat_agent'),
     path('api/test/', views.manual_test, name='manual_test'),
-
+    path('login/', views.login_page, name='login'),
+    path('accounts/', include('allauth.urls')),
   
 ]

@@ -6,6 +6,24 @@ from django.views.decorators.csrf import csrf_exempt
 
 from .ai_agent.agent_graph import app as agent_app
 from .ai_agent.tools import execute_api_call
+from django.shortcuts import render , redirect
+from django.contrib.auth.decorators import login_required
+
+@login_required
+def dashboard(request):
+    # This view only opens if the user is logged in via Google (or local)
+    return render(request, 'dashboard.html', {
+        'user': request.user
+    })
+
+def login_page(request):
+    # If already logged in, send them to the dashboard
+    if request.user.is_authenticated:
+        return redirect('dashboard')
+    return render(request, 'login.html')
+
+
+
 
 
 def dashboard_view(request):

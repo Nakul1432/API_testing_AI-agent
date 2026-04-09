@@ -1,4 +1,5 @@
 {% load static %}
+{% load socialaccount %}
 
 <!DOCTYPE html>
 <html lang="en">
@@ -25,13 +26,34 @@
             </div>
         </div>
         
-        <div class="flex items-center space-x-4">
-            <input type="file" id="swagger-upload" class="hidden" onchange="uploadFile()">
-            <button onclick="document.getElementById('swagger-upload').click()" class="bg-zinc-800 hover:bg-zinc-700 text-white px-5 py-2.5 rounded-xl text-sm font-semibold transition-all flex items-center border border-zinc-700">
-                <i class="fas fa-file-import mr-2 text-zinc-400"></i> Ingest Swagger JSON
-            </button>
-            <div class="text-right border-l border-zinc-800 pl-4">
-                <p class="text-xs font-bold text-zinc-500 uppercase">Test Your API</p>
+        <div class="flex items-center space-x-6">
+            <div class="flex items-center space-x-3">
+                <input type="file" id="swagger-upload" class="hidden" onchange="uploadFile()">
+                <button onclick="document.getElementById('swagger-upload').click()" class="bg-zinc-800 hover:bg-zinc-700 text-white px-5 py-2.5 rounded-xl text-sm font-semibold transition-all flex items-center border border-zinc-700">
+                    <i class="fas fa-file-import mr-2 text-zinc-400"></i> Ingest Swagger JSON
+                </button>
+            </div>
+
+            <div class="flex items-center border-l border-zinc-800 pl-6 space-x-4">
+                <div class="text-right">
+                    <p class="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">Active User</p>
+                    <p class="text-xs font-semibold text-white">{{ user.first_name|default:user.username }}</p>
+                </div>
+                
+                {% if user.socialaccount_set.all.0.get_avatar_url %}
+                    <img src="{{ user.socialaccount_set.all.0.get_avatar_url }}" class="w-10 h-10 rounded-full border border-zinc-700 p-0.5">
+                {% else %}
+                    <div class="w-10 h-10 rounded-full bg-zinc-800 flex items-center justify-center border border-zinc-700">
+                        <i class="fas fa-user text-zinc-500"></i>
+                    </div>
+                {% endif %}
+
+                <form method="post" action="{% url 'account_logout' %}" class="inline">
+                    {% csrf_token %}
+                    <button type="submit" class="text-zinc-500 hover:text-red-400 transition-colors">
+                        <i class="fas fa-sign-out-alt"></i>
+                    </button>
+                </form>
             </div>
         </div>
     </header>
@@ -47,7 +69,7 @@
             
             <div id="chat-box" class="flex-1 p-5 overflow-y-auto space-y-5 custom-scrollbar bg-black/20">
                 <div class="chat-bubble-ai p-4 text-sm leading-relaxed shadow-sm text-zinc-300 bg-zinc-800 rounded-2xl rounded-tl-none border border-zinc-700">
-                    Welcome! Upload your **Swagger file** to begin. I can explain endpoints, generate code, and verify API responses.
+                    Welcome, **{{ user.first_name|default:user.username }}**! Upload your Swagger file to begin. I can explain endpoints, generate code, and verify API responses.
                 </div>
             </div>
 
